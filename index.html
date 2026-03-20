@@ -3,80 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vista Aero Cube 3D - Fixed</title>
+    <title>Aero Cube - Precision Gap</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="vista-wrapper">
+    <div class="vista-container">
         <div class="aurora"></div>
-        <div class="glass-shine"></div>
+        <div class="glass-overlay"></div>
         
-        <div class="bubbles">
-            <div class="bubble"></div>
-            <div class="bubble"></div>
-            <div class="bubble"></div>
-        </div>
-
         <div class="scene">
-            <div class="cube" id="cube">
-                <div class="face front"></div>
-                <div class="face back"></div>
-                <div class="face right"></div>
-                <div class="face left"></div>
-                <div class="face top"></div>
-                <div class="face bottom"></div>
-            </div>
+            <div class="cube-cluster" id="mainCube"></div>
             <div class="floor-reflection"></div>
         </div>
     </div>
 
     <script>
-        const cube = document.getElementById('cube');
-        let isDragging = false;
-        let rotateX = -30, rotateY = -45;
-        let velX = 0, velY = 0;
-        let lastX, lastY;
-        const friction = 0.96;
+        const cluster = document.getElementById('mainCube');
+        const cubeSize = 50; 
+        const gap = 65; // 50px do cubo + 15px de fresta (aprox. 1cm visual)
 
-        document.querySelectorAll('.face').forEach(face => {
-            for (let i = 0; i < 9; i++) {
-                const span = document.createElement('span');
-                face.appendChild(span);
+        for (let x = -1; x <= 1; x++) {
+            for (let y = -1; y <= 1; y++) {
+                for (let z = -1; z <= 1; z++) {
+                    const miniCube = document.createElement('div');
+                    miniCube.className = 'mini-cube';
+                    miniCube.style.transform = `translate3d(${x * gap}px, ${y * gap}px, ${z * gap}px)`;
+                    
+                    ['front', 'back', 'left', 'right', 'top', 'bottom'].forEach(f => {
+                        const face = document.createElement('div');
+                        face.className = `face ${f}`;
+                        miniCube.appendChild(face);
+                    });
+                    cluster.appendChild(miniCube);
+                }
             }
-        });
+        }
+
+        let isDragging = false, rotateX = -30, rotateY = -45, velX = 0, velY = 0, lastX, lastY;
 
         document.addEventListener('mousedown', (e) => {
             isDragging = true;
-            lastX = e.clientX;
-            lastY = e.clientY;
+            lastX = e.clientX; lastY = e.clientY;
             velX = 0; velY = 0;
         });
 
         document.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
-            const deltaX = e.clientX - lastX;
-            const deltaY = e.clientY - lastY;
-            velY = deltaX * 0.4;
-            velX = deltaY * 0.4;
-            lastX = e.clientX;
-            lastY = e.clientY;
+            velY = (e.clientX - lastX) * 0.4;
+            velX = (e.clientY - lastY) * 0.4;
+            lastX = e.clientX; lastY = e.clientY;
         });
 
         document.addEventListener('mouseup', () => isDragging = false);
 
-        function update() {
-            if (!isDragging) {
-                velX *= friction;
-                velY *= friction;
-            }
-            rotateX -= velX;
-            rotateY += velY;
-            // A ordem aqui é vital para não bugar o eixo
-            cube.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-            requestAnimationFrame(update);
+        function render() {
+            if (!isDragging) { velX *= 0.95; velY *= 0.95; }
+            rotateX -= velX; rotateY += velY;
+            cluster.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            requestAnimationFrame(render);
         }
-        update();
+        render();
     </script>
 </body>
 </html>
