@@ -1,0 +1,116 @@
+body, html {
+    margin: 0;
+    height: 100%;
+    background: #002e5b;
+    overflow: hidden;
+    font-family: sans-serif;
+}
+
+.vista-wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Gradiente Vista: Azul Royal para Verde Natureza */
+    background: linear-gradient(135deg, #005bb7 0%, #0099ff 40%, #20e060 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Camada de brilho de vidro no fundo */
+.glass-shine {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(110deg, 
+        rgba(255,255,255,0) 0%, 
+        rgba(255,255,255,0.1) 15%, 
+        rgba(255,255,255,0) 16%);
+    transform: rotate(-20deg);
+    pointer-events: none;
+}
+
+/* Bolhas Aero */
+.bubble {
+    position: absolute;
+    bottom: -100px;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    animation: floatUp 15s infinite linear;
+}
+.bubble:nth-child(1) { width: 60px; height: 60px; left: 10%; animation-delay: 0s; }
+.bubble:nth-child(2) { width: 100px; height: 100px; left: 80%; animation-delay: 4s; }
+.bubble:nth-child(3) { width: 40px; height: 40px; left: 40%; animation-delay: 8s; }
+
+@keyframes floatUp {
+    to { transform: translateY(-120vh) translateX(50px); opacity: 0; }
+}
+
+/* CONFIGURAÇÃO 3D - CORREÇÃO DO BUG */
+.scene {
+    width: 210px;
+    height: 210px;
+    perspective: 1000px; /* Essencial para o 3D */
+    position: relative;
+    z-index: 10;
+}
+
+.cube {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d; /* ESSENCIAL: Mantém os filhos em 3D */
+    will-change: transform;
+}
+
+.face {
+    position: absolute;
+    width: 210px;
+    height: 210px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding: 6px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px); /* Efeito Vidro Fosco */
+    box-sizing: border-box;
+}
+
+.face span {
+    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(0,150,255,0.2));
+    border-radius: 8px;
+    border: 1px solid white;
+    box-shadow: inset 0 2px 5px rgba(255,255,255,0.8);
+    position: relative;
+}
+
+/* Brilho interno em cada peça do cubo */
+.face span::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 50%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
+    border-radius: 8px 8px 50% 50%;
+}
+
+/* Posições das Faces */
+.front  { transform: translateZ(105px); }
+.back   { transform: rotateY(180deg) translateZ(105px); }
+.right  { transform: rotateY(90deg) translateZ(105px); }
+.left   { transform: rotateY(-90deg) translateZ(105px); }
+.top    { transform: rotateX(90deg) translateZ(105px); }
+.bottom { transform: rotateX(-90deg) translateZ(105px); }
+
+/* Reflexo no chão */
+.floor-reflection {
+    position: absolute;
+    top: 260px;
+    left: -50%;
+    width: 200%;
+    height: 100px;
+    background: radial-gradient(ellipse, rgba(255,255,255,0.2), transparent 70%);
+    transform: rotateX(90deg);
+}

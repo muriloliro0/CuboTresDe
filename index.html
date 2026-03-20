@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vista Aero Cube 3D - Fixed</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="vista-wrapper">
+        <div class="aurora"></div>
+        <div class="glass-shine"></div>
+        
+        <div class="bubbles">
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+        </div>
+
+        <div class="scene">
+            <div class="cube" id="cube">
+                <div class="face front"></div>
+                <div class="face back"></div>
+                <div class="face right"></div>
+                <div class="face left"></div>
+                <div class="face top"></div>
+                <div class="face bottom"></div>
+            </div>
+            <div class="floor-reflection"></div>
+        </div>
+    </div>
+
+    <script>
+        const cube = document.getElementById('cube');
+        let isDragging = false;
+        let rotateX = -30, rotateY = -45;
+        let velX = 0, velY = 0;
+        let lastX, lastY;
+        const friction = 0.96;
+
+        document.querySelectorAll('.face').forEach(face => {
+            for (let i = 0; i < 9; i++) {
+                const span = document.createElement('span');
+                face.appendChild(span);
+            }
+        });
+
+        document.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            velX = 0; velY = 0;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const deltaX = e.clientX - lastX;
+            const deltaY = e.clientY - lastY;
+            velY = deltaX * 0.4;
+            velX = deltaY * 0.4;
+            lastX = e.clientX;
+            lastY = e.clientY;
+        });
+
+        document.addEventListener('mouseup', () => isDragging = false);
+
+        function update() {
+            if (!isDragging) {
+                velX *= friction;
+                velY *= friction;
+            }
+            rotateX -= velX;
+            rotateY += velY;
+            // A ordem aqui é vital para não bugar o eixo
+            cube.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            requestAnimationFrame(update);
+        }
+        update();
+    </script>
+</body>
+</html>
